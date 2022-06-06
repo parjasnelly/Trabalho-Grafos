@@ -1,59 +1,57 @@
-<mat-stepper [linear]="false" #stepper class="mt-5">
-  <mat-step [stepControl]="firstFormGroup">
-    <form [formGroup]="firstFormGroup">
+<mat-stepper #stepper class="mt-5">
+  <mat-step>
       <ng-template matStepLabel>Quantidade de Postes e Cabos</ng-template>
       <mat-form-field appearance="fill" class="d-block">
         <mat-label>Quantidade de Postes</mat-label>
-        <input matInput formControlName="firstCtrl" type="number" required [(ngModel)]="qntPontos">
+        <input matInput type="number" required [(ngModel)]="qntPontos">
       </mat-form-field>
       <mat-form-field appearance="fill" class="d-block">
         <mat-label>Quantidade de Possíveis Conexões</mat-label>
-        <input matInput formControlName="secondCtrl" type="number" required [(ngModel)]="qntCabos">
+        <input matInput type="number" required [(ngModel)]="qntCabos">
       </mat-form-field>
 
       <div>
-        <button mat-raised-button (click)="console()">teste</button>
-        <button mat-button matStepperNext (click)="secondStep()">Avançar</button>
+        <button mat-raised-button matStepperNext (click)="secondStep()">Avançar</button>
       </div>
-    </form>
   </mat-step>
-  <mat-step [stepControl]="secondFormGroup" label="Fill out your address">
-    <mat-form-field appearance="fill" *ngFor="let poste of array; index as i" class="d-block">
+  <mat-step label="Definir nome dos Postes">
+    <mat-form-field appearance="fill" *ngFor="let poste of this.graphSrvc.graph.nodes; index as i" class="d-block">
       <mat-label>Nome do poste</mat-label>
       <input matInput placeholder="Digite um nome para o poste"
-             required [(ngModel)]="array[i]">
+             required [(ngModel)]="this.graphSrvc.graph.nodes[i]">
     </mat-form-field>
 
       <div>
-        <button mat-button matStepperPrevious>Voltar</button>
-        <button mat-button matStepperNext>Avançar</button>
+        <button mat-raised-button matStepperPrevious>Voltar</button>
+        <button mat-raised-button matStepperNext>Avançar</button>
       </div>
   </mat-step>
   <mat-step>
-    <ng-template matStepLabel>Done</ng-template>
-    <div class="d-flex justify-content-evenly">
+    <ng-template matStepLabel>Definir Conexões Possíveis</ng-template>
+    <div class="d-flex justify-content-evenly" *ngFor="let i of [].constructor(this.qntCabos); index as idx">
       <mat-form-field appearance="fill">
         <mat-label>Selecione o Poste A</mat-label>
-        <mat-select [(value)]="arestas">
-          <mat-option value="option1" *ngFor="let aresta of array; index as i">{{aresta}}</mat-option>
+        <mat-select [(value)]="this.graphSrvc.graph.edges[idx].e[0]">
+          <mat-option [value]="aresta" *ngFor="let aresta of this.graphSrvc.graph.nodes">{{aresta}}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="fill">
-        <input matInput placeholder="Digite um nome para o poste"
+        <input type="number" [(ngModel)]="this.graphSrvc.graph.edges[idx].w" matInput placeholder="Digite um nome para o poste"
                required>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
         <mat-label>Selecione o Poste B</mat-label>
-        <mat-select [(value)]="arestas">
-          <mat-option value="option1" *ngFor="let aresta of array; index as i">{{aresta}}</mat-option>
+        <mat-select [(value)]="this.graphSrvc.graph.edges[idx].e[1]">
+          <mat-option [value]="aresta" *ngFor="let aresta of this.graphSrvc.graph.nodes">{{aresta}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
 
     <div>
-      <button mat-button matStepperPrevious>Voltar</button>
-      <button mat-button (click)="stepper.reset()">Finalizar</button>
+      <button mat-raised-button (click)="console()">test</button>
+      <button mat-raised-button matStepperPrevious>Voltar</button>
+      <button mat-raised-button routerLink="/">Finalizar</button>
     </div>
   </mat-step>
 </mat-stepper>

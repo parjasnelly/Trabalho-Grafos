@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { createCanvas } from 'algorithmx';
-import { network1, network2 } from './grafos';
+//import { network1, network2 } from './grafos';
+import {GraphService} from "../graph.service";
 // @ts-ignore
 let UnionFind = require("union-find");
 
@@ -13,19 +14,21 @@ export class MstComponent implements OnInit {
   ngOnInit(): void {
     this.startAnimation()
   }
+  constructor(public graphSrvc: GraphService) {
+  }
   startAnimation(){
     const canvas = createCanvas('graph');
     canvas.remove();
     canvas.size([500, 500]);
     canvas.zoom(1.5);
     canvas.edgelayout('symmetric');
-    canvas.nodes(network1.nodes).add().color('blue');
+    canvas.nodes(this.graphSrvc.graph.nodes).add().color('blue');
 
-    network1.edges.map((item:any) => {
+    this.graphSrvc.graph.edges.map((item:any) => {
       canvas.edge(item.e).add({ length: item.w }).label().add({ text: item.w });
     })
     canvas.pause(2);
-    this.prim(network1.edges, network1.nodes, canvas)
+    this.prim(this.graphSrvc.graph.edges, this.graphSrvc.graph.nodes, canvas)
   }
   // @ts-ignore
   prim(net, nods, canvas){

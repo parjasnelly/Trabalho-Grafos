@@ -15,13 +15,6 @@ export class EditGraphComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  firstFormGroup = this._formBuilder.group({
-    firstCtrl: ['', Validators.required],
-    secondCtrl: ['', Validators.required]
-  });
-  secondFormGroup = this._formBuilder.group({
-    secondCtrl: ['', Validators.required],
-  });
   array: number[] = [];
   qntPontos: any;
   qntCabos: any;
@@ -29,14 +22,19 @@ export class EditGraphComponent implements OnInit {
 
 
   secondStep() {
-    for (let i = 0; i < this.qntPontos; i++) {
-      this.array.push(i)
+    // @ts-ignore
+    this.graphSrvc.graph.nodes = Array.from({length: this.qntPontos}, (_, i) => i)
+    this.graphSrvc.graph.edges = []
+    for (let i = 0; i < this.qntCabos; i++) {
+      this.graphSrvc.graph.edges.push({
+        e: Array(2),
+        w: 0
+      })
     }
-    console.log(this.array)
+    console.log(this.graphSrvc.graph)
   }
   console(){
-    console.log(network2)
-    network2.nodes=[]
-    console.log(network2.nodes)
+    console.log(this.graphSrvc.graph)
+
   }
 }
