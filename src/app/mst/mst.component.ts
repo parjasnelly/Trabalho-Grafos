@@ -72,6 +72,7 @@ export class MstComponent implements OnInit {
     let parent = []
     let rank = []
     let minNode, u, v, w, x, y;
+    let pesoFinal = 0
 
     for(let node of nods){
       parent.push(node)
@@ -87,6 +88,7 @@ export class MstComponent implements OnInit {
       v = minNode.e[1]
       w = minNode.w
       i = i + 1
+      pesoFinal+= w
 
       x = forest.find(u)
       y = forest.find(v)
@@ -108,7 +110,7 @@ export class MstComponent implements OnInit {
 
       }
     }
-    animateText(titleLabel, `Arvore espalhada mínima finalizada!`)
+    animateText(titleLabel, `Arvore espalhada mínima finalizada!\n Tamanho total minimo de cabos para conectar todos os postes: ${pesoFinal}`)
   }
 
 }
