@@ -68,16 +68,8 @@ export class MstComponent implements OnInit {
     });
     //Usa uma biblioteca para encontrar ciclos
     let forest = new UnionFind(nods.length);
-
-    let parent = []
-    let rank = []
     let minNode, u, v, w, x, y;
     let pesoFinal = 0
-
-    for(let node of nods){
-      parent.push(node)
-      rank.push(0)
-    }
 
     while (l < (nods.length -1) && i < net.length) {
       //Pega a aresta minima atual
