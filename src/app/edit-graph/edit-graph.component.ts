@@ -15,26 +15,20 @@ export class EditGraphComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  array: number[] = [];
-  qntPontos: any;
-  qntCabos: any;
-  arestas= [[]];
+  qntPontos: number | undefined;
+  qntCabos: number | undefined;
 
 
   secondStep() {
     // @ts-ignore
     this.graphSrvc.graph.nodes = Array.from({length: this.qntPontos}, (_, i) => i)
     this.graphSrvc.graph.edges = []
+    // @ts-ignore
     for (let i = 0; i < this.qntCabos; i++) {
       this.graphSrvc.graph.edges.push({
         e: Array(2),
         w: 0
       })
     }
-    console.log(this.graphSrvc.graph)
-  }
-  console(){
-    console.log(this.graphSrvc.graph)
-
   }
 }

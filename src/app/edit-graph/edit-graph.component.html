@@ -17,8 +17,7 @@
   <mat-step label="Definir nome dos Postes">
     <mat-form-field appearance="fill" *ngFor="let poste of this.graphSrvc.graph.nodes; index as i" class="d-block">
       <mat-label>Nome do poste</mat-label>
-      <input matInput placeholder="Digite um nome para o poste"
-             required [(ngModel)]="this.graphSrvc.graph.nodes[i]">
+      <input matInput placeholder="Digite um nome para o poste" [(ngModel)]="this.graphSrvc.graph.nodes[i]">
     </mat-form-field>
 
       <div>
@@ -49,7 +48,6 @@
     </div>
 
     <div>
-      <button mat-raised-button (click)="console()">test</button>
       <button mat-raised-button matStepperPrevious>Voltar</button>
       <button mat-raised-button routerLink="/">Finalizar</button>
     </div>

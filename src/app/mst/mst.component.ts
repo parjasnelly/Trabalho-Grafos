@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { createCanvas } from 'algorithmx';
-//import { network1, network2 } from './grafos';
 import {GraphService} from "../graph.service";
 // @ts-ignore
 let UnionFind = require("union-find");
@@ -11,41 +10,63 @@ let UnionFind = require("union-find");
   styleUrls: ['./mst.component.css']
 })
 export class MstComponent implements OnInit {
+
+  canvas=createCanvas('graph');
+
   ngOnInit(): void {
-    this.startAnimation()
+    this.startAnimation();
   }
+
   constructor(public graphSrvc: GraphService) {
   }
+
   startAnimation(){
-    const canvas = createCanvas('graph');
-    canvas.remove();
-    canvas.size([500, 500]);
-    canvas.zoom(1.5);
-    canvas.edgelayout('symmetric');
-    canvas.nodes(this.graphSrvc.graph.nodes).add().color('blue');
+    //Inicia define os vertices, arestas e parametros antes de iniciar a animação
+    this.canvas.queue('q1').clear()
+    this.canvas.remove();
+    this.canvas.size([window.innerWidth, (window.innerHeight-100)])
+    this.canvas.zoom(1.5);
+    this.canvas.edgelayout('symmetric');
+    this.canvas.nodes(this.graphSrvc.graph.nodes).add().color('blue');
 
     this.graphSrvc.graph.edges.map((item:any) => {
-      canvas.edge(item.e).add({ length: item.w }).label().add({ text: item.w });
+      this.canvas.edge(item.e).add({ length: item.w }).label().add({ text: item.w });
     })
-    canvas.pause(2);
-    this.prim(this.graphSrvc.graph.edges, this.graphSrvc.graph.nodes, canvas)
+    //Pausa de 2s antes de executar o algoritmo
+    this.canvas.withQ('q1').pause(2);
+    //Algoritmo MST
+    this.kruskal(this.graphSrvc.graph.edges, this.graphSrvc.graph.nodes, this.canvas)
+  }
+
+  removeCanvas(){
+    //Limpa a fila de animação e exclui o canvas
+    this.canvas.withQ().queue('q1').stop()
+    this.canvas.remove()
   }
   // @ts-ignore
-  prim(net, nods, canvas){
-    let maxW = 10000;
-    let n;
-    let filtered;
+
+  kruskal(net, nods, canvas){
+    // @ts-ignore
+    const animateText = (label, text) =>
+      label
+        .visible(false)
+        .pause(0.4)
+        .text(text)
+        .visible(true)
+        .pause(2).withQ('q1')
+
+    const titleLabel = canvas.label('title')
+    titleLabel.add({ pos: [0, '0.5cy'], text: '' })
+
     let i = 0;
     let l = 0;
-
     // @ts-ignore
-    let sorted = net.sort(function(a,b){
-      var x = a.w < b.w? -1:1;
+    //Ordena as arestas em ordem crescente dos pesos
+    let sorted = net.sort((a,b)=>{
+      let x = a.w < b.w? -1:1;
       return x;
     });
-
-    console.log(sorted)
-
+    //Usa uma biblioteca para encontrar ciclos
     let forest = new UnionFind(nods.length);
 
     let parent = []
@@ -56,37 +77,38 @@ export class MstComponent implements OnInit {
       parent.push(node)
       rank.push(0)
     }
-    console.log('parent', parent)
 
     while (l < (nods.length -1) && i < net.length) {
+      //Pega a aresta minima atual
       minNode = sorted[i];
-      console.log(minNode);
+
+      //Pega os 2 vertices da aresta atual e o peso
       u = minNode.e[0]
       v = minNode.e[1]
       w = minNode.w
       i = i + 1
-      console.log('u v w', u,v,w)
 
       x = forest.find(u)
       y = forest.find(v)
-      console.log('x,y', x,y)
+      //verifica se não existem ciclos, para adicionar a aresta a arvore minima
 
       if (x != y) {
         l = l + 1;
+        //Define que agora há uma conexão entre o vertice u e v
         forest.link(u, v);
-        console.log(u,v)
+        animateText(titleLabel, `Conecta o poste ${u} com ${v} na arvore espalhada mínima`)
+        canvas.withQ('q1').node(u).highlight().size('1.25x')
+        canvas.withQ('q1').node(u).color('orange')
+        canvas.withQ('q1').pause(1)
+        canvas.withQ('q1').edge([u, v]).highlight(0)
+        canvas.withQ('q1').edge([u, v]).traverse('red').thickness(5)
+        canvas.withQ('q1').node(v).highlight().size('1.25x')
+        canvas.withQ('q1').node(v).color('orange')
+        canvas.withQ('q1').pause(1)
 
-        canvas.node(u).highlight().size('1.25x')
-        canvas.node(u).color('orange')
-        canvas.pause(0.5)
-
-        canvas.edge([u, v]).highlight(0)
-        canvas.edge([u, v]).traverse('red').thickness(5)
-        canvas.node(v).highlight().size('1.25x')
-        canvas.node(v).color('orange')
-        canvas.pause(0.5)
       }
     }
+    animateText(titleLabel, `Arvore espalhada mínima finalizada!`)
   }
 
 }
